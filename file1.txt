@@ -5,3 +5,4 @@ Adding 4th line
 6th
 Arif Line
 Adding some data to br
+Testing git pull command which is a combination of fetch + merge
