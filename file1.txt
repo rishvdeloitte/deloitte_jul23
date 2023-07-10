@@ -6,3 +6,4 @@ Adding 4th line
 Arif Line
 Adding some data to br
 Testing git pull command which is a combination of fetch + merge
+fetch
