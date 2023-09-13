@@ -1,0 +1,36 @@
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col
+
+if __name__ == '__main__':
+    spark = SparkSession.builder\
+        .appName('Read S3 Write S3').master('local[*]')\
+        .config('spark.jars', 'file:///home/saif/LFS/jars/mysql-connector-j-8.1.0.jar') \
+        .config('spark.jars', 'file:///home/saif/LFS/jars/redshift-jdbc42-2.0.0.4.jar') \
+        .getOrCreate()
+
+    empDf = spark.read.format('csv')\
+        .option('header','true')\
+        .load('s3a://arif-bktdel/input/emp.txt')
+    # empDf.show(5)
+
+    deptDf = spark.read.format('jdbc') \
+        .option('url', 'jdbc:mysql://aia-db.cablnp6bjkw6.us-east-1.rds.amazonaws.com:3306/aia_db?useSSL=False') \
+        .option('driver', 'com.mysql.cj.jdbc.Driver') \
+        .option('user', 'admin') \
+        .option('password', 'Welcome123') \
+        .option('dbtable', 'dept') \
+        .load()
+    # deptDf.show()
+
+    # empDeptDf = empDf.join(deptDf, empDf['deptno'] == deptDf['deptno'], 'inner')
+    empDeptDf = empDf.alias('e').join(deptDf.alias('d'), col('e.deptno') == col('d.deptno'), 'inner')
+    deptDf = empDeptDf.selectExpr('e.empid','e.deptno as emp_deptno')
+    # deptDf.show(5)
+
+    deptDf.write.mode('overwrite').format('jdbc') \
+        .option('url', 'jdbc:redshift://ronak-redshift-1.c5aq4ecjod2e.us-east-1.redshift.amazonaws.com:5439/ronak_db') \
+        .option('driver', 'com.amazon.redshift.jdbc.Driver') \
+        .option('user', 'awsuser') \
+        .option('password', 'Welcome123') \
+        .option('dbtable', 'ronak_tbl') \
+        .save()
