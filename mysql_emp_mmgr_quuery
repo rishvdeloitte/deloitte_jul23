@@ -1,0 +1,23 @@
+resDf = spark.sql("""
+            SELECT A.EMPNO AS EMP_EMPNO,
+            A.ENAME AS EMP_ENAME,
+            B.EMPNO AS MGR_EMPNO,
+            B.ENAME AS MGR_NAME,
+            C.EMP_CNT AS MGR_TEAM_CNT
+            FROM emp A, emp B,
+                (SELECT A.MGR, COUNT(A.ENAME) AS EMP_CNT 
+                FROM emp A, emp B 
+                WHERE A.MGR=B.EMPNO
+                GROUP BY A.MGR) C
+            WHERE A.MGR=B.EMPNO
+            AND B.EMPNO=C.MGR
+            """)
+resDf.show()
+
+resDf.write.format('jdbc')\
+            .mode('overwrite')\
+            .option('url','jdbc:mysql://arifmysqlinstance.cdo7vhlkey3k.us-east-1.rds.amazonaws.com:3306/arif_mysqldb?useSSL=False')\
+            .option('user','admin')\
+            .option('password','Welcome123')\
+            .option('dbtable','emp_mgr_cnt')\
+            .save()
