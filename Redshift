@@ -1,0 +1,67 @@
+drop table nyc311;
+
+create table nyc311 (
+Unique_Key int,
+Created_Date VARCHAR,
+Closed_Date VARCHAR,
+Agency varchar,
+Agency_Name varchar,
+Complaint_Type varchar,
+Descriptor varchar,
+Location_Type varchar,
+Incident_Zip int,
+Incident_Address varchar,
+Street_Name varchar,
+Cross_Street_1 varchar,
+Cross_Street_2 varchar,
+Intersection_Street_1 varchar,
+Intersection_Street_2 varchar,
+Address_Type varchar,
+City varchar,
+Landmark varchar,
+Facility_Type varchar,
+Status varchar,
+Due_Date VARCHAR,
+Resolution_Description varchar(500),
+Resolution_Action_Updated_Date VARCHAR,
+Community_Board varchar,
+Borough varchar,
+X_Coordinate_State_Plane int,
+Y_Coordinate_State_Plane int,
+Park_Facility_Name varchar,
+Park_Borough varchar,
+School_Name varchar,
+School_Number varchar,
+School_Region varchar,
+School_Code varchar,
+School_Phone_Number varchar,
+School_Address varchar,
+School_City varchar,
+School_State varchar,
+School_Zip varchar,
+School_Not_Found varchar,
+School_or_Citywide_Complaint varchar,
+Vehicle_Type varchar,
+Taxi_Company_Borough varchar,
+Taxi_Pick_Up_Location varchar,
+Bridge_Highway_Name varchar,
+Bridge_Highway_Direction varchar,
+Road_Ramp varchar,
+Bridge_Highway_Segment varchar,
+Garage_Lot_Name varchar,
+Ferry_Direction varchar,
+Ferry_Terminal_Name varchar,
+Latitude varchar,
+Longitude varchar,
+Location varchar);
+
+SELECT * FROM NYC311 LIMIT 5;
+
+COPY nyc311
+FROM 's3://arif-bkt-deloct23/NYC311data.csv'
+credentials 'aws_access_key_id=<>;aws_secret_access_key=<>'
+ignoreheader 1
+DELIMITER ','
+CSV;
+
+SELECT * FROM stl_load_errors;
