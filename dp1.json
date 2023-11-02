@@ -1,0 +1,54 @@
+{
+  "objects": [
+    {
+      "id": "MySchedule",
+      "name": "SchedulePeriod",
+      "startDateTime": "2023-11-02T05:30:00",
+      "period": "1 hours",
+      "type": "Schedule",
+      "occurrences": "1"
+    },
+    {
+      "id": "S3Input",
+      "type": "S3DataNode",
+      "schedule": {
+        "ref": "MySchedule"
+      },
+      "filePath": "s3://saif-dp-src/NYC311data.csv"
+    },
+    {
+      "id": "S3Output",
+      "type": "S3DataNode",
+      "schedule": {
+        "ref": "MySchedule"
+      },
+      "filePath": "s3://saif-dp-tgt/NYC311data_op.csv"
+    },
+    {
+      "id": "MyEC2Resource",
+      "type": "Ec2Resource",
+      "schedule": {
+        "ref": "MySchedule"
+      },
+      "instanceType": "m1.medium",
+      "role": "DataPipelineDefaultRole",
+      "resourceRole": "DataPipelineDefaultResourceRole"
+    },
+    {
+      "id": "MyCopyActivity",
+      "type": "CopyActivity",
+      "runsOn": {
+        "ref": "MyEC2Resource"
+      },
+      "input": {
+        "ref": "S3Input"
+      },
+      "output": {
+        "ref": "S3Output"
+      },
+      "schedule": {
+        "ref": "MySchedule"
+      }
+    }
+  ]
+}
