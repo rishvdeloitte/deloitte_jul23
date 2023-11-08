@@ -1,13 +1,14 @@
 {
-    "fileLocations": [
-        {
-            "URIs": [
-                "https://bktforquicksight1232.s3.amazonaws.com/NYC311data.csv"
-            ]
-        }
-    ],
-    "globalUploadSettings": {
-        "textqualifier": "\""
+"fileLocations": [
+    {
+        "URIs": [
+            "s3://bktforquicksight12312/NYC311data.csv"
+        ]
     }
+],
+"globalUploadSettings": {
+    "format": "CSV",
+    "delimiter": ",",
+    "containsHeader": "true"
 }
-
+}
