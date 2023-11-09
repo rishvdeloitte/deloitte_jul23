@@ -1,1 +1,66 @@
-Nothing
+import boto3
+
+dynamodb = boto3.resource('dynamodb', region_name='us-east-1')  # Replace with your preferred region
+
+
+table_name = 'Inventory'
+
+table = dynamodb.create_table(
+    TableName=table_name,
+    KeySchema=[
+        {
+            'AttributeName': 'ProductID',
+            'KeyType': 'HASH'  # Partition key
+        }
+    ],
+    AttributeDefinitions=[
+        {
+            'AttributeName': 'ProductID',
+            'AttributeType': 'S'  # String
+        }
+    ],
+    ProvisionedThroughput={
+        'ReadCapacityUnits': 5,
+        'WriteCapacityUnits': 5
+    }
+)
+
+
+table.meta.client.get_waiter('table_exists').wait(TableName=table_name)
+
+table.put_item(
+    Item={
+        'ProductID': '12345',
+        'ProductName': 'Smartphone',
+        'StockQuantity': 100
+    }
+)
+
+
+table.update_item(
+    Key={
+        'ProductID': '12345'
+    },
+    UpdateExpression="SET StockQuantity = :quantity",
+    ExpressionAttributeValues={
+        ':quantity': 90
+    }
+)
+
+response = table.get_item(
+    Key={
+        'ProductID': '12345'
+    }
+)
+item = response.get('Item')
+if item:
+    print(f"Product: {item['ProductName']}, Stock Quantity: {item['StockQuantity']}")
+else:
+    print("Product not found.")
+
+
+table.delete_item(
+    Key={
+        'ProductID': '12345'
+    }
+)
